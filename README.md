@@ -1,3 +1,5 @@
+TEST
+
 # argocd-katas
 
 Exercise list in order:
