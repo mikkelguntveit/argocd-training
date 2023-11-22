@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mikkel-qoutes-flask
+  namespace: argocd
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: student-13
+  project: default
+  source:
+    repoURL: https://github.com/mikkelguntveit/argocd-training.git  # Update this URL if the helm chart is in a different repo
+    targetRevision: HEAD
+    path: quotes-flask/helm/quotes-flask
+    helm:
+      valueFiles:
+        - values.yaml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
