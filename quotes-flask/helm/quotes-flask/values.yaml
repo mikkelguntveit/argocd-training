@@ -2,7 +2,7 @@ backend:
   replicas: 1
   tag: release
 frontend:
-  replicas: 2
+  replicas: 3
   service:
     type: NodePort
   tag: release
