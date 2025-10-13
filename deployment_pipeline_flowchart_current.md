@@ -2,23 +2,22 @@
 flowchart TD
     A[Developer in Slack] -->|uses Dbot| B(Start Deployment);
     
-    B --> C{"Spinnaker Main Pipeline"};
+    B --> C{Spinnaker Pipeline};
     C --> D[Run DB Migrations];
-    D --> E[Trigger 'Deploy Argo services' sub-pipeline];
+    D --> E[Trigger GitHub Actions];
     
-    E --> F["Execute 'deploy-monolith-service-prod.yaml' GHA"];
-    F --> G[Checkout gitops-infra-config];
-    G --> H[Update Image Tag in Manifests];
-    H --> I[Commit & Push to Main];
+    E --> F[Checkout gitops-infra-config];
+    F --> G[Update Image Tag in Manifests];
+    G --> H[Commit & Push to Main];
     
-    I --> J{ArgoCD};
-    J -->|Detects Commit| K[Sync Manifests to Cluster];
-    K --> L[Initiate Kubernetes Rolling Update];
+    H --> I{ArgoCD};
+    I -->|Detects Commit| J[Sync Manifests to Cluster];
+    J --> K[Initiate Kubernetes Rolling Update];
     
-    L --> M[Wait for ArgoCD Health Check];
-    M -->|Sends Callback| C;
+    K --> L[Wait for ArgoCD Health Check];
+    L -->|Sends Callback| M{Spinnaker};
     
-    C --> N["Pause for Manual Judgment"];
+    M --> N["Pause for Manual Judgment"];
     N --> O{Developer Decision};
     
     O -- "Proceed" --> P[Continue Pipeline];
@@ -28,7 +27,7 @@ flowchart TD
     R --> S([Pipeline Complete]);
     
     Q --> T[Spinnaker Executes Rollback Pipeline];
-    T --> U[Deploys Previous Image Tag];
+    T --> U[Deploys Previous Image Tag via GitHub Actions/ArgoCD];
     U --> V([Pipeline Failed]);
 
     %% Styling
