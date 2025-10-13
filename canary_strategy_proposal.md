@@ -41,22 +41,22 @@ Our investigation shows that the monolith's architecture is already well-aligned
 
 ```mermaid
 graph TD
-    subgraph "Path A: Infrastructure Isolation (Not Recommended)"
+    subgraph path_a ["Path A - Infrastructure Isolation (Not Recommended)"]
         direction LR
         A1(Canary Pods) --> A2(Canary Queues);
         A3(Stable Pods) --> A4(Stable Queues);
         A_Con(Result: Prohibitively Complex CI/CD & Code Changes);
     end
 
-    subgraph "Path B: Discipline-First (Recommended)"
+    subgraph path_b ["Path B - Discipline-First (Recommended)"]
         direction LR
         B1(Canary Pods) --> B3(Shared Queues);
         B2(Stable Pods) --> B3;
         B_Con(Result: Relies on Backward Compatibility & DLQ Safety Net);
     end
 
-    style "Path B: Discipline-First (Recommended)" fill:#dff0d8,stroke:#3c763d,stroke-width:2px;
-    style "Path A: Infrastructure Isolation (Not Recommended)" fill:#f2dede,stroke:#a94442,stroke-width:1px;
+    style path_b fill:#dff0d8,stroke:#3c763d,stroke-width:2px;
+    style path_a fill:#f2dede,stroke:#a94442,stroke-width:1px;
 ```
 
 *   **3.1. Path A: Infrastructure Isolation (Not Recommended)**
