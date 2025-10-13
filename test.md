@@ -23,7 +23,7 @@ This section provides a brief, high-level overview of the current state.
 
 Our infrastructure is a multi-layered system that directs traffic to the monolith, which in turn relies on several external, shared resources.
 
-```
+```mermaid
 graph TD
     subgraph "User Request Flow"
         A[External User] --> B["Cloudflare - DNS, WAF, CDN"];
@@ -99,7 +99,7 @@ This section summarizes the key takeaways from our deep-dive investigations into
 
 Our investigation shows that the monolith's architecture is already well-aligned with one of the two primary canary strategies, making the choice clear.
 
-```
+```mermaid
 graph TD
     subgraph "Path A: Infrastructure Isolation (Not Recommended)"
         direction LR
