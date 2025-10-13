@@ -23,36 +23,37 @@ This section provides a brief, high-level overview of the current state.
 
 Our infrastructure is a multi-layered system that directs traffic to the monolith, which in turn relies on several external, shared resources.
 
-```mermaid
+```
 graph TD
-    subgraph "External World"
-        User_Traffic(User Traffic)
+    subgraph "User Request Flow"
+        A[External User] --> B["Cloudflare - DNS, WAF, CDN"];
+        B --> C["Google Cloud Load Balancer"];
+        C --> D["Istio Ingress Gateway"];
+        D --> E{"Kubernetes Gateway API"};
     end
 
-    subgraph "Cloud & Network Infrastructure"
-        CF(Cloudflare)
-        GCLB(Google Cloud Load Balancer)
-        Istio(Istio Ingress Gateway)
-    end
+    subgraph "Production Environment (Kubernetes)"
+        E -- "100% Traffic" --> F["API Gateway - Monolith"];
+        F --> G["Monolith Services"];
 
-    subgraph "Kubernetes Cluster"
-        API_GW(API Gateway)
-        Monolith_Pods(Monolith Pods)
+        E -- "Other Routes" --> J["API Gateway - Microservices"];
+        J --> K["Satellite Services"];
     end
 
     subgraph "Shared Backend Resources"
-        RabbitMQ(CloudAMQP for RabbitMQ)
-        SQL(SQL Server for Hangfire & AppData)
-        Redis(Redis for Sessions)
+        G --> L(("Shared SQL DBs"));
+        G --> M(("Shared MongoDB"));
+        G --> N(("Shared Redis"));
+        G --> O(("Shared RabbitMQ"));
     end
 
-    User_Traffic --> CF --> GCLB --> Istio --> API_GW --> Monolith_Pods;
-    Monolith_Pods -.-> RabbitMQ;
-    Monolith_Pods -.-> SQL;
-    Monolith_Pods -.-> Redis;
-
-    style Monolith_Pods fill:#dae8fc,stroke:#6c8ebf,stroke-width:2px;
-    style Shared Backend Resources fill:#f5f5f5,stroke:#333,stroke-width:1px;
+    %% Styling
+    style F fill:#cce,stroke:#333,stroke-width:2px
+    style G fill:#cce,stroke:#333,stroke-width:2px
+    style L fill:#f8c,stroke:#333,stroke-width:2px
+    style M fill:#f8c,stroke:#333,stroke-width:2px
+    style N fill:#f8c,stroke:#333,stroke-width:2px
+    style O fill:#f8c,stroke:#333,stroke-width:2px
 ```
 
 #### **2.2. Current Deployment Process**
@@ -98,7 +99,7 @@ This section summarizes the key takeaways from our deep-dive investigations into
 
 Our investigation shows that the monolith's architecture is already well-aligned with one of the two primary canary strategies, making the choice clear.
 
-```mermaid
+```
 graph TD
     subgraph "Path A: Infrastructure Isolation (Not Recommended)"
         direction LR
